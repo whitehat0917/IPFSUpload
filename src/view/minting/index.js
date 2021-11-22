@@ -39,54 +39,77 @@ const Minting = () => {
     }
 
     const mint = async () => {
-        const images = importAll(require.context('../../assets/images', false, /\.(png|jpe?g|svg)$/));
+        const images = importAll(require.context('../../assets/images', false, /\.(png|jpe?g|gif)$/));
         const imageList = Object.values(images);
-        let datas = [];
-        // if (userAddress === '') {
-        //     console.log("connect metamask")
-        //     return toast.warning("please connect metamask")
+        // console.log(imageList)
+        // let datas = '';
+        // let temp;
+        // for (let i=0;i<imageList.length;i++){
+        //     temp = imageList[i].default.split("/")[3]
+        //     console.log(temp)
+        //     datas = datas + ',' + temp.split(".")[0] + '.png';
         // }
+        // for (let i=900;i<1200;i++){
+        //     datas = datas +',' + 'https://ipfs.io/ipfs/QmUoUa5VPrdag7Uf5A6Mke74chCmwSzJGFbQRt4qFSaXgK/' + 'metadata' + i + '.json';
+        // }
+        // console.log(datas)
+        // setAllName(datas)
+        if (userAddress === '') {
+            console.log("connect metamask")
+            return toast.warning("please connect metamask")
+        }
 
         // const random = Math.floor(Math.random() * imageList.length);
         // console.log(random)
-        let temp = '';
+        // let temp = '';
         for (let i = 0; i < imageList.length; i++) {
             setProcessing(true);
-            const response = await axios(imageList[i].default, { responseType: 'arraybuffer' });
-            const result = await ipfs.files.add(Buffer.from(response.data));
             // console.log(result)
-            const cid = await client.storeDirectory([
-                new File(
-                    [
-                        JSON.stringify({
-                            name: "Ganster NFT",
-                            description: "Ganster NFTs",
-                            assetType: "image",
-                            image: `https://ipfs.io/ipfs/${result[0].hash}`,
-                        }),
-                    ],
-                    'metadata.json'
-                ),
-            ]);
-            const tokenURI = `https://ipfs.io/ipfs/${cid}/metadata.json`;
-            // console.log(tokenURI)
-            datas.push(tokenURI)
-            temp = temp + cid + ",";
-            console.log(i)
+            try{
+                const response = await axios(imageList[i].default, { responseType: 'arraybuffer' });
+                const result = await ipfs.files.add(Buffer.from(response.data));
+                console.log(result, i)
+                // const cid = await client.storeDirectory([
+                //     new File(
+                //         [
+                //             JSON.stringify({
+                //                 name: "Gangster NFT",
+                //                 description: "Gangster NFTs",
+                //                 assetType: "image",
+                //                 image: `https://ipfs.io/ipfs/${result[0].hash}`,
+                //             }),
+                //         ],
+                //         'metadata.json'
+                //     ),
+                // ]);
+                // const tokenURI = `https://ipfs.io/ipfs/${cid}/metadata.json`;
+                // // console.log(tokenURI)
+                // datas.push(tokenURI)
+                // temp = temp + cid + ",";
+                // setAllName(temp)
+                // console.log(i)
+            }catch (e){
+                console.log(e)
+            }
         }
-        setAllName(temp)
         setProcessing(false);
 
+        // let datas = '0x45A255479d11AaC04f227e3f900021D0188B8814';
+        // let list = [];
+        // for (let i=0;i<datas.split(",").length;i++){
+        //     list.push(datas.split(",")[i]);
+        // }
+        // console.log(list.length)
         // realmContract.methods
-        // .setUri(datas).send({from: userAddress})
-        // .then( res => {
-        //   setProcessing(false);
-        //   console.log("success")
-        // })
-        // .catch( err => {
-        //   setProcessing(false);
-        //   console.log(err);
-        // })
+        //     .batchMintTeam(list).send({ from: userAddress })
+        //     .then(res => {
+        //         setProcessing(false);
+        //         console.log("success")
+        //     })
+        //     .catch(err => {
+        //         setProcessing(false);
+        //         console.log(err);
+        //     })
     }
     return (
         <MintingStyle>
